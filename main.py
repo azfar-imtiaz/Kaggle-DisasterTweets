@@ -30,7 +30,7 @@ if __name__ == '__main__':
     
     data_cleaner = DataCleaner(use_ner=True)
     train_data = data_cleaner.clean_data(train_data)
-    for index, text in enumerate(train_data['text']):
+    for index, text in enumerate(train_data['location']):
         if index > 50:
             break
         print(text)
