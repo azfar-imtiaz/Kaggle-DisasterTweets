@@ -7,7 +7,7 @@ from DataCleaner import DataCleaner
 
 def read_data(filename: str, is_train_file: bool=True) -> List[dict]:
     data = defaultdict(lambda: [])
-    with open(filename, 'r') as rfile:
+    with open(filename, 'r', encoding='utf-8') as rfile:
         # field_names = ['id', 'keyword', 'location', 'text']
         # if is_train_file:
         #     field_names.append('target')
@@ -30,4 +30,7 @@ if __name__ == '__main__':
     
     data_cleaner = DataCleaner(use_ner=True)
     train_data = data_cleaner.clean_data(train_data)
-    
+    for index, text in enumerate(train_data['text']):
+        if index > 50:
+            break
+        print(text)

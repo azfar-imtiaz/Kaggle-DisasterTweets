@@ -30,11 +30,19 @@ class DataCleaner:
 
     @staticmethod
     def remove_punctuation(text: str) -> str:
-        return re.sub(r'[^\w\s]', '', text)
+        return re.sub(r'[^\w\s]', '', text).strip()
+    
+    @staticmethod
+    def remove_numbers(text: str) -> str:
+        return re.sub(r'\d+', 'NUMBER', text)
+    
+    def apply_preprocessing_to_text(self, text: str) -> str:
+        text = self.lowercase(text)
+        text = self.remove_elements_from_text(text)
+        text = self.remove_numbers(text)
+        text = self.remove_punctuation(text)
+        return text
 
     def clean_data(self, data: dict) -> List:
-        # TODO: This can be improved; reduce 3 map calls to 1 if possible
-        data['text'] = map(self.lowercase, data['text'])
-        data['text'] = map(self.remove_elements_from_text, data['text'])
-        data['text'] = map(self.remove_punctuation, data['text'])
+        data['text'] = map(self.apply_preprocessing_to_text, data['text'])
         return data
