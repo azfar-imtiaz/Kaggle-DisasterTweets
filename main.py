@@ -3,6 +3,7 @@ from typing import List
 from collections import defaultdict
 
 from DataCleaner import DataCleaner
+from FeatureExtractor import FeatureExtractor
 
 
 def read_data(filename: str, is_train_file: bool=True) -> List[dict]:
@@ -30,7 +31,10 @@ if __name__ == '__main__':
     
     data_cleaner = DataCleaner(use_ner=True)
     train_data = data_cleaner.clean_data(train_data)
-    for index, text in enumerate(train_data['location']):
-        if index > 50:
-            break
-        print(text)
+    # for index, text in enumerate(train_data['location']):
+    #     if index > 50:
+    #         break
+    #     print(text)
+
+    feature_extractor = FeatureExtractor()
+    features = feature_extractor.extract_features_from_text(train_data['text'], train_data['location'])
