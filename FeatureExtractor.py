@@ -7,7 +7,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 
 class FeatureExtractor:
     def __init__(self) -> None:
-        self.count_vectorizer = CountVectorizer(ngram_range=(1, 3))
+        self.count_vectorizer = CountVectorizer(ngram_range=(1, 3), max_features=50000)
         self.label_encoder = LabelEncoder()
 
     def extract_features_from_text(self, ls_texts: List[str], ls_locations: List[int], ls_keywords: List[str], is_train=True) -> np.array:
@@ -18,6 +18,8 @@ class FeatureExtractor:
             text_vectors: np.array = self.count_vectorizer.transform(ls_texts)
             keyword_labels: np.array = self.label_encoder.fit_transform(ls_keywords)
         ls_locations: List = [[x] for x in ls_locations]
-        keyword_labels = [[x] for x in keyword_labels.tolist()]
-        combined_features: np.array = hstack([text_vectors, ls_locations, keyword_labels]).toarray()
+        # TODO: The problem is here
+        # keyword_labels = [[x] for x in keyword_labels.tolist()]
+        combined_features: np.array = hstack([text_vectors, ls_locations]).toarray()
+        # combined_features = text_vectors
         return combined_features
