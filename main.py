@@ -1,6 +1,8 @@
 import csv
+import pandas as pd
 from typing import List
 from collections import defaultdict
+from sklearn.model_selection import train_test_split
 
 from DataCleaner import DataCleaner
 from FeatureExtractor import FeatureExtractor
@@ -9,10 +11,6 @@ from FeatureExtractor import FeatureExtractor
 def read_data(filename: str, is_train_file: bool=True) -> List[dict]:
     data = defaultdict(lambda: [])
     with open(filename, 'r', encoding='utf-8') as rfile:
-        # field_names = ['id', 'keyword', 'location', 'text']
-        # if is_train_file:
-        #     field_names.append('target')
-        # reader = csv.DictReader(rfile, fieldnames=field_names)
         reader = csv.reader(rfile)
         for index, row in enumerate(reader):
             if index == 0:
@@ -31,10 +29,14 @@ if __name__ == '__main__':
     
     data_cleaner = DataCleaner(use_ner=True)
     train_data = data_cleaner.clean_data(train_data)
-    # for index, text in enumerate(train_data['location']):
-    #     if index > 50:
-    #         break
-    #     print(text)
+
+    target_data = train_data.pop('target')
+    train_df = pd.DataFrame.from_dict(train_data)
+    X_train, X_val, y_train, y_val = train_test_split(train_df, target_data, test_size=0.2, random_state=42)
 
     feature_extractor = FeatureExtractor()
-    features = feature_extractor.extract_features_from_text(train_data['text'], train_data['location'])
+    features = feature_extractor.extract_features_from_text(X_train['text'], 
+                                                            X_train['location'], 
+                                                            X_train['keyword'], 
+                                                            is_train=True)
+    
