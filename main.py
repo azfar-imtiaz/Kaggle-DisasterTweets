@@ -37,13 +37,9 @@ if __name__ == '__main__':
         print("Cleaning data...")
         train_data = data_cleaner.clean_data(train_data)
         joblib.dump(train_data, 'data/train_cleaned.pkl')
-        # with open('train_cleaned.pkl', 'wb') as wfile:
-        #     pickle.dump(train_data, wfile)
     else:
         train_data = joblib.load('data/train_cleaned.pkl')
-        # with open('data/train_cleaned.pkl', 'rb') as rfile:
-        #     train_data = pickle.load(rfile)        
-    
+        
     target_data = train_data.pop('target')
     train_df = pd.DataFrame.from_dict(train_data)
     print("Performing train test split...")
@@ -51,17 +47,14 @@ if __name__ == '__main__':
 
     feature_extractor = FeatureExtractor()
     print("Extracting features from training data...")
-    features_train = feature_extractor.extract_features_from_text(X_train['text'], 
-                                                            X_train['location'], 
-                                                            X_train['keyword'], 
-                                                            is_train=True)
+    features_train = feature_extractor.extract_features_from_text(X_train['text'], X_train['location'], is_train=True)
     
-    model = TextClassifier()
+    model = TextClassifier(split_classifiers_on_label=True)
     print("Training model...")
-    model.train_model(features_train, y_train)
+    model.train_model(features_train, y_train, list(train_df['keyword']))
     
     print("Extracting features from validation data...")
-    features_val = feature_extractor.extract_features_from_text(X_val['text'], X_val['location'], X_val['keyword'], is_train=False)
+    features_val = feature_extractor.extract_features_from_text(X_val['text'], X_val['location'], is_train=False)
     print("Getting predictions on validation data...")
     predictions = model.get_predictions(features_val)
 
