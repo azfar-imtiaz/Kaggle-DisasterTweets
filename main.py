@@ -38,6 +38,7 @@ if __name__ == '__main__':
         train_data = data_cleaner.clean_data(train_data)
         joblib.dump(train_data, 'data/train_cleaned.pkl')
     else:
+        print("Loading clean data from pickle file...")
         train_data = joblib.load('data/train_cleaned.pkl')
         
     target_data = train_data.pop('target')
@@ -51,11 +52,11 @@ if __name__ == '__main__':
     
     model = TextClassifier(split_classifiers_on_label=True)
     print("Training model...")
-    model.train_model(features_train, y_train, list(train_df['keyword']))
+    model.train_model(features_train, y_train, list(X_train['keyword']))
     
     print("Extracting features from validation data...")
     features_val = feature_extractor.extract_features_from_text(X_val['text'], X_val['location'], is_train=False)
     print("Getting predictions on validation data...")
-    predictions = model.get_predictions(features_val)
+    predictions = model.get_predictions(features_val, keywords=list(X_val['keyword']))
 
     print(classification_report(y_val, predictions))
