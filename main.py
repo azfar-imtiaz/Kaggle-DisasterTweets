@@ -2,17 +2,15 @@ import os
 import csv
 import joblib
 import pandas as pd
-from typing import List
+from typing import Dict
 from collections import defaultdict
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report
 
 from DataCleaner import DataCleaner
-from FeatureExtractor import FeatureExtractor
-from TextClassifier import TextClassifier
+from train_lstm_model import train_model
 
 
-def read_data(filename: str, is_train_file: bool=True) -> List[dict]:
+def read_data(filename: str, is_train_file: bool = True) -> Dict:
     data = defaultdict(lambda: [])
     with open(filename, 'r', encoding='utf-8') as rfile:
         reader = csv.reader(rfile)
@@ -46,17 +44,4 @@ if __name__ == '__main__':
     print("Performing train test split...")
     X_train, X_val, y_train, y_val = train_test_split(train_df, target_data, test_size=0.2, random_state=42)
 
-    feature_extractor = FeatureExtractor()
-    print("Extracting features from training data...")
-    features_train = feature_extractor.extract_features_from_text(X_train['text'], X_train['location'], is_train=True)
-    
-    model = TextClassifier(split_classifiers_on_label=True)
-    print("Training model...")
-    model.train_model(features_train, y_train, list(X_train['keyword']))
-    
-    print("Extracting features from validation data...")
-    features_val = feature_extractor.extract_features_from_text(X_val['text'], X_val['location'], is_train=False)
-    print("Getting predictions on validation data...")
-    predictions = model.get_predictions(features_val, keywords=list(X_val['keyword']))
-
-    print(classification_report(y_val, predictions))
+    train_model(X_train, y_train, X_val, y_val, num_classes=2)

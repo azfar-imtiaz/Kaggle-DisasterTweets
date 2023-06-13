@@ -1,6 +1,6 @@
 import re
 import spacy
-from typing import List, Union
+from typing import List, Dict, Union
 
 
 class DataCleaner:
@@ -54,7 +54,7 @@ class DataCleaner:
         text = self.remove_punctuation(text)
         return text
 
-    def clean_data(self, data: dict) -> List:
+    def clean_data(self, data: Union[Dict, List[Dict]]) -> List:
         data['text'] = map(self.apply_preprocessing_to_text, data['text'])
         data['location'] = map(self.validate_location, data['location'])
         return data
